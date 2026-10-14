@@ -1,0 +1,31 @@
+---
+- name: Docker install & website fetch
+  hosts: all
+  become: true
+
+  tasks:
+  - name: Docker install on remote server
+    apt:
+     name: docker.io
+     state: present
+     update_cache: yes
+
+  - name: start docker service
+    service:
+     name: docker
+     state: started
+     enabled: yes
+
+  - name: pull the nginx image
+    docker_image:
+     name: nginx
+     source: pull
+
+  - name: run the container
+    docker_container:
+     name: nginx-container
+     image: nginx
+     state: started
+     restart_policy: always
+     published_ports:
+     - "80:80"
